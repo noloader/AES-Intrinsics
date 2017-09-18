@@ -1,14 +1,15 @@
-/* Written and placed in public domain by Jeffrey Walton             */
-/*  fips197-p8.c tests Power 8 AES using GCC and XL C/C++ built-ins. */
+/* Written and placed in public domain by Jeffrey Walton         */
+/*  aes-p8.c tests Power 8 AES using GCC and XL C/C++ built-ins. */
 
-/* xlc -qarch=pwr8 -qaltivec fips197-p8.c -o fips197-p8.exe */
-/* gcc -std=c99 -mcpu=power8 fips197-p8.c -o fips197-p8.exe */
+/* xlc -qarch=pwr8 -qaltivec aes-p8.c -o aes-p8.exe              */
+/* gcc -std=c99 -mcpu=power8 aes-p8.c -o aes-p8.exe              */
 
-/* To test on an AltiVec/Power 8 little-endian machine use  */
-/* GCC112. To test on a big-endian machine use GCC119.      */
+/* To test on an AltiVec/Power 8 little-endian machine use       */
+/* GCC112. To test on a big-endian machine use GCC119.           */
 
-/* Many thanks to Andy Polyakov for comments, helpful suggestions and */
-/* answering questions about his ASM implmentation of Power 8 AES.    */
+/* Many thanks to Andy Polyakov for comments, helpful            */
+/* suggestions and answering questions about his ASM             */
+/* implmentation of Power 8 AES.                                 */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,14 +32,8 @@
 # define TEST_AES_LITTLE_ENDIAN 1
 #endif
 
-#if defined(TEST_AES_XLC)
-// #include <builtins.h>
-typedef vector unsigned char uint8x16_p8;
-typedef vector unsigned int uint64x2_p8;
-#elif defined(TEST_AES_GCC)
 typedef vector unsigned char uint8x16_p8;
 typedef vector unsigned long long uint64x2_p8;
-#endif
 
 /* Load from big-endian format. Perform endian conversion as necessary */
 uint8x16_p8 Load8x16(const uint8_t src[16])
@@ -48,7 +43,13 @@ uint8x16_p8 Load8x16(const uint8_t src[16])
 	return vec_xl_be(0, (uint8_t*)src);
 #else
 	/* GCC, Clang, etc */
-	return (uint8x16_p8)vec_vsx_ld(0, src);
+# if defined(TEST_AES_LITTLE_ENDIAN)
+	const uint8x16_p8 mask = {15,14,13,12, 11,10,9,8, 7,6,5,4, 3,2,1,0};
+	const uint8x16_p8 zero = {0};
+	return vec_perm(vec_vsx_ld(0, src), zero, mask);
+# else
+	return vec_vsx_ld(0, src);
+# endif
 #endif
 }
 
@@ -60,7 +61,13 @@ void Store8x16(const uint8x16_p8 src, uint8_t dest[16])
 	vec_xst_be(src, 0, (uint8_t*)dest);
 #else
 	/* GCC, Clang, etc */
+# if defined(TEST_AES_LITTLE_ENDIAN)
+	const uint8x16_p8 mask = {15,14,13,12, 11,10,9,8, 7,6,5,4, 3,2,1,0};
+	const uint8x16_p8 zero = {0};
+	vec_vsx_st(vec_perm(src, zero, mask), 0, dest);
+# else
 	vec_vsx_st(src, 0, dest);
+# endif
 #endif
 }
 
