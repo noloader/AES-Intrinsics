@@ -18,6 +18,9 @@
 
 #if defined(__ALTIVEC__)
 # include <altivec.h>
+# undef vector
+# undef pixel
+# undef bool
 #endif
 
 #if defined(__xlc__) || defined(__xlC__)
@@ -32,8 +35,8 @@
 # define TEST_AES_LITTLE_ENDIAN 1
 #endif
 
-typedef vector unsigned char uint8x16_p8;
-typedef vector unsigned long long uint64x2_p8;
+typedef __vector unsigned char uint8x16_p8;
+typedef __vector unsigned long long uint64x2_p8;
 
 uint8x16_p8 Reverse8x16(const uint8x16_p8 src)
 {
