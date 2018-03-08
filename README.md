@@ -10,7 +10,7 @@ The GitHub does not have an Intel AES implementation. Intel has an excellent doc
 
 If you want to test the programs but don't have a capable machine on hand, then you can use the Intel Software Development Emulator. You can find it at http://software.intel.com/en-us/articles/intel-software-development-emulator.
 
-## ARM SHA
+## ARM AES
 
 To compile the ARM sources on an ARMv8 machine, be sure your CFLAGS include `-march=armv8-a+crc+crypto`. Apple iOS CFLAGS should include `-arch arm64` and a system root like `-isysroot  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.2.sdk`.
 
@@ -18,7 +18,7 @@ The ARM source files are based on code from ARM, and code by Johannes Schneiders
 
 If you want to test the programs but don't have a capable machine on hand, then you can use the ARM  Fixed Virtual Platforms. You can find it at https://developer.arm.com/products/system-design/fixed-virtual-platforms.
 
-## Power8 SHA
+## Power8 AES
 
 To compile the Power8 sources on an PPC machine with GCC, be sure your CFLAGS include `-mcpu=power8 -maltivec`. If using IBM XL C/C++ then use `-qarch=pwr8 -qaltivec`.
 
