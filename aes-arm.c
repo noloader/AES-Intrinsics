@@ -1,4 +1,4 @@
-/* aes-arm.c - ARMv8 SHA extensions using C intrinsics         */
+/* aes-arm.c - ARMv8 AES extensions using C intrinsics         */
 /*   Written and placed in public domain by Jeffrey Walton     */
 /*   Based on code from ARM, and by Johannes Schneiders, Skip  */
 /*   Hovsmith and Barry O'Rourke for the mbedTLS project.      */
