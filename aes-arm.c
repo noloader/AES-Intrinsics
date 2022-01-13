@@ -77,7 +77,7 @@ void derive_subkey_128 (const uint8_t key[], uint8_t* subkeys)
 	memcpy (subkeys, temp_subkeys + 4, 4 * 10 * sizeof (uint32_t));
 }
 
-void aes_process_arm(const uint8_t key[], const uint8_t subkeys[], uint32_t rounds,
+void aes_encrypt_arm(const uint8_t key[], const uint8_t subkeys[], uint32_t rounds,
                      const uint8_t input[], uint8_t output[], uint32_t length)
 {
 	while (length >= 16)
@@ -154,7 +154,7 @@ int main(int argc, char* argv[])
 	/* Result */
 	uint8_t result[19] = { 0 };
 
-	aes_process_arm((const uint8_t*)key, (const uint8_t*)subkeys, 10, input, result+3, 16);
+	aes_encrypt_arm((const uint8_t*)key, (const uint8_t*)subkeys, 10, input, result+3, 16);
 
 	printf("Input: ");
 	for (unsigned int i=0; i<16; ++i)
