@@ -123,6 +123,7 @@ void aes_decrypt_arm(const uint8_t key[], const uint8_t subkeys[], uint32_t roun
 		
 		// inv add round key
 		block = veorq_u8 (block, vld1q_u8 (subkeys + (rounds-1) * 16));
+		printf ("Pass round %u\n", rounds-1);
 		
 		for (unsigned int i = rounds - 2; i >= 0; --i)
 		{
@@ -130,6 +131,7 @@ void aes_decrypt_arm(const uint8_t key[], const uint8_t subkeys[], uint32_t roun
 			block = vaesdq_u8 (block, vld1q_u8 (subkeys + i * 16));
 			// AES inv mix columns
 			block = vaesimcq_u8 (block);
+			printf ("Pass round %u\n", i);
 		}
 		
 		// AES single round decryption
