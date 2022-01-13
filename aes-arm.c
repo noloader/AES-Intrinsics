@@ -122,7 +122,7 @@ void aes_decrypt_arm(const uint8_t key[], const uint8_t subkeys[], uint32_t roun
 		uint8x16_t block = vld1q_u8(input);
 		
 		// inv add round key
-		block = veorq_u8 (block, vld1q_u8 (subkeys + 144));
+		block = veorq_u8 (block, vld1q_u8 (subkeys + (rounds-1) * 16));
 		
 		for (unsigned int i = rounds - 2; i >= 0; --i)
 		{
