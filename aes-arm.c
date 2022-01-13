@@ -114,6 +114,33 @@ void aes_encrypt_arm(const uint8_t key[], const uint8_t subkeys[], uint32_t roun
 	}
 }
 
+void aes_decrypt_arm(const uint8_t key[], const uint8_t subkeys[], uint32_t rounds,
+                     const uint8_t input[], uint8_t output[], uint32_t length)
+{
+	while (length >= 16)
+	{
+		uint8x16_t block = vld1q_u8(input);
+		
+		for (unsigned int i = rounds - 1; i > 0; --i)
+		{
+			// AES single round decryption
+			block = vaesdq_u8 (block, vld1q_u8 (subkeys + i * 16));
+			// AES inv mix columns
+			block = vaesimcq_u8 (block);
+		}
+		
+		// AES single round decryption
+		block = vaesdq_u8 (block, vld1q_u8 (subkeys));
+		// final add
+		block = veorq_u8 (block, vld1q_u8 (key));
+
+		vst1q_u8(output, block);
+
+		input += 16; output += 16;
+		length -= 16;
+	}
+}
+
 #if defined(TEST_MAIN)
 
 #include <stdio.h>
@@ -153,8 +180,10 @@ int main(int argc, char* argv[])
 
 	/* Result */
 	uint8_t result[19] = { 0 };
+	uint8_t decrypted[19] = { 0 };
 
 	aes_encrypt_arm((const uint8_t*)key, (const uint8_t*)subkeys, 10, input, result+3, 16);
+	aes_decrypt_arm ((const uint8_t *)key, (const uint8_t *)subkeys, 10, result+3, decrypted+3, 16);
 
 	printf("Input: ");
 	for (unsigned int i=0; i<16; ++i)
@@ -175,11 +204,21 @@ int main(int argc, char* argv[])
 	const uint8_t exp[16] = {
 		0x39, 0x25, 0x84, 0x1D, 0x02, 0xDC, 0x09, 0xFB, 0xDC, 0x11, 0x85, 0x97, 0x19, 0x6A, 0x0B, 0x32
 	};
+	
+	printf ("Decrypted: ");
+	for (unsigned int i = 3; i < 19; ++i)
+		printf("%02X ", result [i]);
+	printf("\n");
 
 	if (0 == memcmp(result+3, exp, 16))
-		printf("SUCCESS!!!\n");
+		printf("ENCRYPT SUCCESS!!!\n");
 	else
-		printf("FAILURE!!!\n");
+		printf("ENCRYPT FAILURE!!!\n");
+	
+	if (0 == memcmp (decrypted+3, input, 16))
+		printf("DECRYPT SUCCESS!!!\n");
+	else
+		printf("DECRYPT FAILURE!!!\n");
 
 	return 0;
 }
