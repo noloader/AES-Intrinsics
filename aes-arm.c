@@ -48,7 +48,7 @@ static const uint8_t rcon[11] = {
 	0x8d, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36
 };
 
-inline uint32_t g(uint32_t w, int r)
+uint32_t g(uint32_t w, int r)
 {
 	// assume little endian
 	w = (w >> 8) | (w << 24);
