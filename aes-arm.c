@@ -207,7 +207,7 @@ int main(int argc, char* argv[])
 	
 	printf ("Decrypted: ");
 	for (unsigned int i = 3; i < 19; ++i)
-		printf("%02X ", result [i]);
+		printf("%02X ", decrypted [i]);
 	printf("\n");
 
 	if (0 == memcmp(result+3, exp, 16))
