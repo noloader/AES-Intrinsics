@@ -120,16 +120,18 @@ void aes_decrypt_arm(const uint8_t key[], const uint8_t subkeys[], uint32_t roun
 	while (length >= 16)
 	{
 		uint8x16_t block = vld1q_u8(input);
+		uint8x16_t rk;
 		
 		// inv add round key
 		block = veorq_u8 (block, vld1q_u8 (subkeys + (rounds-1) * 16));
 		
 		for (int i = rounds - 2; i >= 0; --i)
 		{
-			// AES single round decryption
-			block = vaesdq_u8 (block, vld1q_u8 (subkeys + i * 16));
 			// AES inv mix columns
 			block = vaesimcq_u8 (block);
+			rk = vaesimcq_u8 (vld1q_u8 (subkeys + i * 16));
+			// AES single round decryption
+			block = vaesdq_u8 (block, rk);
 		}
 		
 		// AES single round decryption
