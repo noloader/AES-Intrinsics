@@ -2,7 +2,7 @@
 
 This GitHub repository contains source code for AES encryption using Intel AES and ARMv8 AES intrinsics, and Power8 built-ins. The source files should be portable across toolchains which support the Intel and ARMv8 AES extensions.
 
-Only the AES encryption function is provided. The function operates on full blocks. Users must set the key, and users must pad the last block. The small sample program included with each source file does both on an empty message.
+Preliminary AES encryption for ARM AES is prepared. Other platforms, however, are still decryption-only.
 
 ## Intel AES
 
